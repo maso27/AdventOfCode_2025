@@ -2,17 +2,8 @@ filename = './Day02/input.txt'
 verbose = 3
 
 def find_pattern(num_str):
-    num_length = len(num_str) # the length of the number
-    if num_length % 2 != 0:
-        return False
-    pattern_length = int(num_length / 2) # the pattern would be repeated twice
-    pattern = num_str[0:pattern_length]
-    if pattern * 2 == num_str:
-        return True
-    return False
-    # see if this is a future solution (it matches any pattern of any length)
-    # i = (num_str + num_str).find(num_str, 1, -1)
-    # return i != -1
+    i = (num_str + num_str).find(num_str, 1, -1)
+    return i != -1
 
 
 
