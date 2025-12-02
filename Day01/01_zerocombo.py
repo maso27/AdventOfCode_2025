@@ -1,4 +1,4 @@
-filename = './Day01/sample.txt'
+filename = './Day01/input.txt'
 verbose = 3
 
 f = open(filename, 'r')
@@ -10,7 +10,7 @@ needlepoint = 50
 num_zeros = 0
 
 for line in lines:
-    turn_dir = list(line)[0] # grab the first character
+    turn_dir = line[0] # grab the first character
     clicks = int(line[1:])
     if verbose >= 2:
         print(f"  Turning {turn_dir} and moving {clicks} clicks from {needlepoint}", end='')
