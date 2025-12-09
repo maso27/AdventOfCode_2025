@@ -55,18 +55,13 @@ if verbose >= 2:
 print(f'Total valid splits: {valid_splits}')
 
 # find valid realities
-realities = 1
-this_line = [s_loc[0]]
-for a in range(len(lines)):
-    for location in this_line.copy():
-        if (location,a) in splitters:
-            this_line.remove(location)
-            this_line.append((location-1))
-            this_line.append((location+1))
-            realities += 1
+this_row = [0] * len(lines[0])
+this_row[s_loc[0]] = 1
+for line in lines:
+    for a, spot in enumerate(line):
+        if spot == '^':
+            this_row[a-1] += this_row[a]
+            this_row[a+1] += this_row[a]
+            this_row[a] = 0
+realities = sum(this_row)
 print(f'Total valid realities: {realities}')
-
-# # alternate approach for valid realities
-# splitters_dict = {}
-# for valid_splitter in valid_splitters:
-#     splitters_dict[valid_splitter] = 1
