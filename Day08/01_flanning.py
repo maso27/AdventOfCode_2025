@@ -1,19 +1,10 @@
 filename = './Day08/sample.txt'
 verbose = 2
 
-import pyflann as pf
+import pyflann as pf # had to pip import pyflann-py3d
 import numpy as np
 
-# def distance(loc1, loc2): # distance between points
-#     x1 = loc1[0]
-#     y1 = loc1[1]
-#     z1 = loc1[2]
-#     x2 = loc2[0]
-#     y2 = loc2[1]
-#     z2 = loc2[2]
-
-#     distance = ((x2 - x1)**2 + (y2 - y1)**2 + (z2 - z1)**2)  # not using **0.5
-#     return distance
+SEARCH_DEPTH = 5
 
 f = open(filename, 'r')
 lines = f.readlines() # reading all lines
@@ -31,14 +22,32 @@ for line in lines:
 
 locations = np.array(locations)
 
-print (locations)
+if verbose >= 4:
+    print (locations)
 flann = pf.FLANN()
-result, dists = flann.nn(locations, locations, 5, algorithm='kmeans', branching=32, iterations=7, checks=16)
+result, dists = flann.nn(locations, locations, SEARCH_DEPTH, algorithm='kmeans', branching=32, iterations=7, checks=16)
 
+result = np.delete(result, 0, 1) # remove first element (self-index)
+dists = np.delete(dists, 0, 1)   # remove first element (self-distance)
 
-print("Indices of Nearest Neighbors:\n", result)
-print("Distances to Nearest Neighbors:\n", dists)
+if verbose >= 2:
+    print("Indices of Nearest Neighbors:\n", result)
+    print("Distances to Nearest Neighbors:\n", dists)
 
-# x_min, x_max = np.min(locations[:,0]), np.max(locations[:,0])
-# y_min, y_max = np.min(locations[:,1]), np.max(locations[:,1])
-# z_min, z_max = np.min(locations[:,2]), np.max(locations[:,2])
+# find shortest distances
+shortest_indexes = np.argsort(dists, axis=None)
+# skip every other index (because it's same 2 points from the other end)
+shortest_indexes = np.delete(shortest_indexes, np.arange(1, len(shortest_indexes), 2))
+
+if verbose >= 3:
+    print(f'shortest distances: {shortest_indexes}')
+
+for idx in shortest_indexes[:10]:
+    point1 = int(idx / (SEARCH_DEPTH - 1)) # first point is the row
+    point2 = result.flatten()[idx]         # second point is where the index is pointing
+    if verbose >= 2:
+        print(f'Point {point1} is distance: {dists.flatten()[idx]} from point {point2}')
+    if verbose >= 1:
+        print(f'  {locations[point1]} to {locations[point2]}')
+
+  
